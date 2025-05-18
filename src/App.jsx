@@ -3,10 +3,12 @@ import { InputBox } from './components'
 import useCurrencyInfo from './hooks/useCurrencyInfo'
 
 function App() {
-  const [amount, setAmount] = useState(0)
-  const [from, setFrom] = useState("usd")
-  const [to, setTo] = useState("inr")
-  const [convertedAmount, setConvertedAmount] = useState(0)
+  const [amount, setAmount] = useState("")
+  const [from, setFrom] = useState("USD")
+  const [to, setTo] = useState("INR")
+  const [convertedAmount, setConvertedAmount] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
 
   const currencyInfo = useCurrencyInfo(from)
   const options = Object.keys(currencyInfo)
@@ -19,7 +21,24 @@ function App() {
   }
 
   const convert = () => {
-    setConvertedAmount(amount * currencyInfo[to])
+    if (!amount || isNaN(amount)) {
+      setError("Please enter a valid amount")
+      return
+    }
+    if (!currencyInfo[to]) {
+      setError("Unable to fetch conversion rates. Please try again.")
+      return
+    }
+    setError("")
+    setIsLoading(true)
+    try {
+      const result = amount * currencyInfo[to]
+      setConvertedAmount(result.toFixed(2))
+    } catch (err) {
+      setError("Error converting currency. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -37,6 +56,11 @@ function App() {
           <h2 className="text-3xl font-bold text-center text-blue-700 mb-6 drop-shadow animate-fade-in">
             Currency Converter
           </h2>
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg animate-fade-in">
+              {error}
+            </div>
+          )}
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -48,9 +72,12 @@ function App() {
                 label="From"
                 amount={amount}
                 currencyOptions={options}
-                onCurrencyChange={(currency) => setFrom(currency)}
+                onCurrencyChange={(currency) => setFrom(currency.toUpperCase())}
                 selectCurrency={from}
-                onAmountChange={(amount) => setAmount(amount)}
+                onAmountChange={(amount) => {
+                  setAmount(amount)
+                  setError("")
+                }}
               />
             </div>
             <div className="relative w-full h-0.5 my-4 flex justify-center items-center">
@@ -70,16 +97,17 @@ function App() {
                 label="To"
                 amount={convertedAmount}
                 currencyOptions={options}
-                onCurrencyChange={(currency) => setTo(currency)}
+                onCurrencyChange={(currency) => setTo(currency.toUpperCase())}
                 selectCurrency={to}
                 amountDisable
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold text-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl animate-fade-in"
+              disabled={isLoading}
+              className={`w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold text-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl animate-fade-in ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              Convert {from.toUpperCase()} to {to.toUpperCase()}
+              {isLoading ? 'Converting...' : `Convert ${from} to ${to}`}
             </button>
           </form>
         </div>

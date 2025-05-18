@@ -6,7 +6,7 @@ function InputBox({
     onAmountChange,
     onCurrencyChange,
     currencyOptions = [],
-    selectCurrency = "usd",
+    selectCurrency = "USD",
     amountDisable = false,
     currencyDisable = false,
     className = "",
@@ -30,8 +30,15 @@ function InputBox({
                     type="number"
                     placeholder="Amount"
                     disabled={amountDisable}
-                    value={amount}
-                    onChange={(e) => onAmountChange && onAmountChange(Number(e.target.value))}
+                    value={amount === "" ? "" : amount}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === "" || (!isNaN(value) && value >= 0)) {
+                            onAmountChange && onAmountChange(value === "" ? "" : Number(value));
+                        }
+                    }}
+                    min="0"
+                    step="any"
                 />
             </div>
             <div className="w-1/2 flex flex-col items-end text-right">
