@@ -78,42 +78,43 @@ function App() {
                   setAmount(amount)
                   setError("")
                 }}
-              />
-            </div>
-            <div className="relative w-full h-0.5 my-4 flex justify-center items-center">
-              <button
+                />
+              </div>
+              <div className="relative w-full h-0.5 my-4 flex justify-center items-center">
+                <button
                 type="button"
                 className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-white rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-4 py-2 shadow-lg transition-transform duration-300 hover:scale-110 hover:rotate-180 animate-bounce"
                 onClick={swap}
                 aria-label="Swap currencies"
-              >
-                <svg className="w-6 h-6 inline-block" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 17v1a3 3 0 003 3h10m4-4V7a3 3 0 00-3-3H7m0 0L3 7m4-3l4 4" />
+                >
+                {/* Swap icon SVG */}
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 17v2a2 2 0 002 2h12m0 0l-4-4m4 4l-4 4M20 7V5a2 2 0 00-2-2H6m0 0l4 4m-4-4l4-4" />
                 </svg>
-              </button>
-            </div>
-            <div className="w-full mt-3 mb-6 animate-slide-in-up">
-              <InputBox
+                </button>
+              </div>
+              <div className="w-full mt-3 mb-6 animate-slide-in-up">
+                <InputBox
                 label="To"
                 amount={convertedAmount}
                 currencyOptions={options}
                 onCurrencyChange={(currency) => setTo(currency.toUpperCase())}
                 selectCurrency={to}
                 amountDisable
-              />
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className={`w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold text-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl animate-fade-in ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {isLoading ? 'Converting...' : `Convert ${from} to ${to}`}
+              </button>
+              </form>
             </div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold text-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl animate-fade-in ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              {isLoading ? 'Converting...' : `Convert ${from} to ${to}`}
-            </button>
-          </form>
-        </div>
-      </div>
+            </div>
 
-      {/* Tailwind custom animations */}
+            {/* Tailwind custom animations */}
       <style>
         {`
           @keyframes gradient-move {
